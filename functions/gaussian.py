@@ -12,7 +12,7 @@ class Gauss(BaseFunction):
     def __init__(self, fid: int):
         super().__init__(fid)
         self._parameters = [
-            FuncParameter("norm", 1.0, (0.0, 1e8)),
+            FuncParameter("norm", 1.0, (-1e8, 1e8)),
             FuncParameter("mean_x", 0.0, (-1e8, 1e8)),
             FuncParameter("mean_y", 0.0, (-1e8, 1e8)),
             FuncParameter("sigma_l", 1.0, (0, 1e8)),
