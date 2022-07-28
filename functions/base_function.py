@@ -85,6 +85,13 @@ class BaseFunction(metaclass=abc.ABCMeta):
                 return True, param
         return False, None
 
+    def get_bounds(self) -> List[Tuple[float, float]]:
+        bounds = []
+        for param in self.parameters:
+            if param.state == ParamState.FREE:
+                bounds.append(param.param_range)
+        return bounds
+
     @abc.abstractmethod
     def f(self, explanatory: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
         pass

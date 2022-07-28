@@ -22,6 +22,14 @@ class FunctionList:
     def remove_func(self, index: int):
         self._funcs.pop(index)
 
+    def get_bounds(self) -> Tuple[Tuple[float, ...], Tuple[float, ...]]:
+        bounds = []
+        for func in self._funcs:
+            bounds += func.get_bounds()
+
+        transposed = np.transpose(np.array(bounds))
+        return tuple(transposed[0]), tuple(transposed[1])
+
     def _publish_new_fid(self, func_type: Type[BaseFunction]) -> int:
         name = func_type.name()
         current_fid = 0
