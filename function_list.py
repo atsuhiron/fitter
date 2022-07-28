@@ -66,7 +66,7 @@ class FunctionList:
         if dim == 1:
             return self._f(args[0], *args[1:])
         if dim == 2:
-            return self._f(tuple(args[0:2]), *args[2:])
+            return self._f((args[0][0], args[0][1]), *args[1:])
         assert False, msg
 
 
