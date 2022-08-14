@@ -8,6 +8,7 @@ import numpy as np
 
 from functions.function_parameters import FuncParameter
 from functions.function_parameters import ParamState
+from functions.function_info import FunctionInfo
 
 
 class BaseFunction(metaclass=abc.ABCMeta):
@@ -35,6 +36,15 @@ class BaseFunction(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def parameters(self) -> List[FuncParameter]:
         pass
+
+    def get_function_info(self) -> FunctionInfo:
+        return FunctionInfo(
+            self.name(),
+            self.unique_name(),
+            self.parameters,
+            len(self.parameters),
+            self.get_free_num()
+        )
 
     def try_assign_arg(self, *args) -> bool:
         dof = self.get_free_num()

@@ -15,6 +15,12 @@ class FunctionList:
             f_list = []
         self._funcs: List[BaseFunction] = f_list
 
+    def __len__(self):
+        return len(self._funcs)
+
+    def get_functions(self) -> List[BaseFunction]:
+        return self._funcs
+
     def add_func(self, func_type: Type[BaseFunction]):
         new_id = self._publish_new_fid(func_type)
         self._funcs.append(func_type(new_id))
