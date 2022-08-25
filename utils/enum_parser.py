@@ -10,10 +10,14 @@ def parse_enum(enum_str: str, enum_type: Type[Enum]) -> Enum:
 
 
 if __name__ == "__main__":
+    from enum import auto
+
+
+    # noinspection PyArgumentList
     class Number(Enum):
         DEF = 0
-        ONE = 1
-        TWO = 2
+        ONE = auto()
+        TWO = auto()
 
     one = parse_enum("one", Number)
     default_value = parse_enum("X", Number)

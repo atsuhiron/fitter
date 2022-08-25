@@ -84,3 +84,13 @@ def _split_and_strip(com: str) -> List[str]:
             continue
         com_args.append(split_arg)
     return com_args
+
+
+if __name__ == "__main__":
+    com1 = parse("help")
+    com2 = parse("add my_func")
+    com3 = parse("set value const_0 const 23.22")
+    com4 = parse("set state const_0 const FIX")
+    com5 = parse("set state gauss_0 theta_s DEPENDED theta_l")
+    com6 = parse("set state gauss_0 theta_s DEPENDED theta_l 0.6")
+    com7 = parse("set bounds gauss_0 norm 0.5 25")

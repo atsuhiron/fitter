@@ -4,7 +4,7 @@ import enum
 
 # noinspection PyArgumentList
 class ParamState(enum.Enum):
-    DEFAULT = enum.auto()
+    DEFAULT = 0
     FREE = enum.auto()
     FIX = enum.auto()
     DEPENDED = enum.auto()

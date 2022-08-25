@@ -12,7 +12,7 @@ ComArgType = Union[float, str, ParamState]
 
 # noinspection PyArgumentList
 class CuiMainCommandType(Enum):
-    DEFAULT = auto()
+    DEFAULT = 0
     HELP = auto()
     QUIT = auto()
     FIT = auto()

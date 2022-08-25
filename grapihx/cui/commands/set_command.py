@@ -24,7 +24,7 @@ class SetCommand(BaseCommand):
         # ex. set value gauss_0 norm 12.22
         # ex. set bounds const_0 const -10 10
         # ex. set bounds const_0 const -10, 10
-        if 4 <= len(self.com_args) <= 5:
+        if not (4 <= len(self.com_args) <= 6):
             raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
 
         if not isinstance(self.com_args[0], str):
@@ -64,10 +64,43 @@ class SetCommand(BaseCommand):
                 # state must be string
                 raise CommandParseException("ステートは文字列で指定してください: {}".format(self.com_args[3]))
 
-            state_enum = enum_parser.parse_enum(self.com_args[3], ParamState)
+            state_enum = ParamState(enum_parser.parse_enum(self.com_args[3], ParamState))
             if state_enum is ParamState.DEFAULT:
                 # Cannot parse state
                 raise CommandParseException("不明なステートです: {}".format(self.com_args[3]))
+
+            self.com_args[3] = state_enum
+            if state_enum is ParamState.FIX:
+                # ex. set state const_0 const fix
+                # ex. set state const_0 const FIX -0.5
+                if not (4 <= len(self.com_args) <= 5):
+                    raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
+                if len(self.com_args) == 5:
+                    if not isinstance(self.com_args[4], float):
+                        raise CommandParseException("パラメータ値は数値で指定してください: {}".format(self.com_args[3]))
+
+            if state_enum is ParamState.FREE:
+                # ex. set state const_0 const free
+                # ex. set state const_0 const FREE -0.5
+                if not (4 <= len(self.com_args) <= 5):
+                    raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
+                if len(self.com_args) == 5:
+                    if not isinstance(self.com_args[4], float):
+                        raise CommandParseException("パラメータ値は数値で指定してください: {}".format(self.com_args[4]))
+
+            if state_enum is ParamState.DEPENDED:
+                # ex. set state gauss_0 theta_l DEPENDED theta_s
+                # ex. set state gauss_0 theta_l depended theta_s 0.88
+                if not (5 <= len(self.com_args) <= 6):
+                    raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
+                if not isinstance(self.com_args[4], str):
+                    raise CommandParseException("依存先のパラメータは文字列で指定してください: {}".format(self.com_args[4]))
+                if len(self.com_args) == 6:
+                    if not isinstance(self.com_args[5], float):
+                        raise CommandParseException("依存係数は数値で指定してください: {}".format(self.com_args[4]))
+
+            if state_enum is ParamState.GLOBAL_DEPENDED:
+                raise CommandParseException("この機能は未実装です: {}".format(self.com_args[3]))
             return
 
         if self.com_args[0] == "depend":
