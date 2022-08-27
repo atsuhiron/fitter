@@ -17,6 +17,7 @@ from grapihx.cui.commands.add_command import AddCommand
 from grapihx.cui.commands.remove_command import RemoveCommand
 from grapihx.cui.commands.save_command import SaveCommand
 from grapihx.cui.commands.set_command import SetCommand
+from grapihx.cui.commands.set_data_command import SetDataCommand
 
 _COM_TYPE_TO_COM_MAP: Dict[CuiMainCommandType, Type[BaseCommand]] = {
     CuiMainCommandType.HELP: HelpCommand,
@@ -28,6 +29,7 @@ _COM_TYPE_TO_COM_MAP: Dict[CuiMainCommandType, Type[BaseCommand]] = {
     CuiMainCommandType.REMOVE: RemoveCommand,
     CuiMainCommandType.SAVE: SaveCommand,
     CuiMainCommandType.SET: SetCommand,
+    CuiMainCommandType.SET_DATA: SetDataCommand,
 }
 
 

@@ -22,6 +22,7 @@ class CuiMainCommandType(Enum):
     REMOVE = auto()
     SAVE = auto()
     SET = auto()
+    SET_DATA = auto()
 
 
 class BaseCommand(metaclass=abc.ABCMeta):
