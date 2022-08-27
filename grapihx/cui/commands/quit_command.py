@@ -5,6 +5,7 @@ from grapihx.cui.commands.base_command import BaseCommand
 from grapihx.cui.commands.base_command import CuiMainCommandType
 from grapihx.cui.commands.base_command import ComArgType
 from grapihx.cui.exceptions.exception import CommandParseException
+from grapihx.cui.exceptions.exception import QuitException
 
 
 class QuitCommand(BaseCommand):
@@ -16,7 +17,7 @@ class QuitCommand(BaseCommand):
         return CuiMainCommandType.QUIT
 
     def execute(self, fitter: Fit):
-        pass
+        raise QuitException()
 
     def check(self):
         if len(self.com_args) != 0:

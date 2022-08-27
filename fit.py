@@ -24,7 +24,14 @@ class Fit:
     def __init__(self,
                  data: Optional[np.ndarray] = None,
                  function_list: Optional[FunctionList] = None):
-        self.data = data
+        if data is None:
+            self.data = data
+        else:
+            if self._is_valid_data(data):
+                self.data = data
+            else:
+                raise ValueError("データの型か shape が不正です。")
+
         if function_list is None:
             self.fl = FunctionList()
         else:
@@ -68,10 +75,17 @@ class Fit:
         param.state = p_state
         return True
 
-    def _is_valid_data(self) -> bool:
-        if type(self.data) is not np.ndarray:
+    def try_set_data(self, data: np.ndarray) -> bool:
+        if self._is_valid_data(data):
+            self.data = data
+            return True
+        return False
+
+    @staticmethod
+    def _is_valid_data(data: np.ndarray) -> bool:
+        if type(data) is not np.ndarray:
             return False
-        if self.data.ndim > 2:
+        if data.ndim > 2:
             return False
         return True
 
