@@ -23,7 +23,6 @@ class CuiGfx(BaseGfx):
             com_str = input(">>>")
             try:
                 command = com_parser.parse(com_str)
-                print(command.com_args)
                 command.execute(self.fit)
 
             except QuitException:
