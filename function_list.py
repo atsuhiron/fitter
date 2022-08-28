@@ -38,7 +38,7 @@ class FunctionList:
 
     def _publish_new_fid(self, func_type: Type[BaseFunction]) -> int:
         name = func_type.name()
-        current_fid = 0
+        current_fid = -1
         for f in self._funcs:
             if f.name() != name:
                 continue
