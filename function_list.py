@@ -14,6 +14,7 @@ class FunctionList:
         if f_list is None:
             f_list = []
         self._funcs: List[BaseFunction] = f_list
+        self.dim = None
 
     def __len__(self):
         return len(self._funcs)
@@ -55,11 +56,11 @@ class FunctionList:
 
     def _detect_dim(self) -> Tuple[int, str]:
         if len(self._funcs) == 0:
-            return -1, "No functions."
+            return -1, "関数がありません"
 
         dims = [func.dim() for func in self._funcs]
         if len(set(dims)) > 1:
-            return -1, "Multiple types of dimensions corresponding to the function are detected."
+            return -1, "異なる複数の次元の関数が検出されました"
         return dims[0], "OK"
 
     def _f(self, explanatory: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]], *args) -> np.ndarray:
@@ -68,10 +69,12 @@ class FunctionList:
         return np.sum(sub_function_results, axis=0)
 
     def f(self, *args) -> np.ndarray:
-        dim, msg = self._detect_dim()
-        if dim == 1:
+        msg = ""
+        if self.dim is None:
+            self.dim, msg = self._detect_dim()
+        if self.dim == 1:
             return self._f(args[0], *args[1:])
-        if dim == 2:
+        if self.dim == 2:
             return self._f((args[0][0], args[0][1]), *args[1:])
         assert False, msg
 
