@@ -7,6 +7,7 @@ from typing import Tuple
 import numpy as np
 
 from function_list import FunctionList
+from function_list import ExplanatoryType
 from functions.function_info import FunctionInfo
 from functions.base_function import BaseFunction
 from functions.function_parameters import FuncParameter
@@ -23,11 +24,12 @@ class Fit:
 
     def __init__(self,
                  data: Optional[np.ndarray] = None,
-                 function_list: Optional[FunctionList] = None):
+                 function_list: Optional[FunctionList] = None,
+                 explanatory: Optional[ExplanatoryType] = None):
         if data is None:
             self.data = data
         else:
-            if self._is_valid_data(data):
+            if self._is_valid_data(data, explanatory):
                 self.data = data
             else:
                 raise ValueError("データの型か shape が不正です。")
@@ -36,6 +38,8 @@ class Fit:
             self.fl = FunctionList()
         else:
             self.fl = function_list
+
+        self.explanatory = explanatory
 
     def get_func_info(self) -> List[FunctionInfo]:
         return [func.get_function_info() for func in self.fl.get_functions()]
@@ -75,19 +79,27 @@ class Fit:
         param.state = p_state
         return True
 
-    def try_set_data(self, data: np.ndarray) -> bool:
-        if self._is_valid_data(data):
+    def try_set_data(self, data: np.ndarray, explanatory: Optional[ExplanatoryType] = None) -> bool:
+        if self._is_valid_data(data, explanatory):
             self.data = data
+
+            if explanatory is None:
+                if self.data.ndim == 2:
+                    x_arr = np.arange(self.data.shape[1], dtype=np.float64)
+                    y_arr = np.arange(self.data.shape[0], dtype=np.float64)
+                    self.explanatory = np.meshgrid(x_arr, y_arr)
+                elif self.data.ndim == 1:
+                    self.explanatory = np.arange(self.data.shape[0])
+                assert False  # ここには到達しない
+            else:
+                self.explanatory = explanatory
             return True
         return False
 
-    @staticmethod
-    def _is_valid_data(data: np.ndarray) -> bool:
-        if type(data) is not np.ndarray:
-            return False
-        if data.ndim > 2:
-            return False
-        return True
+    def f_without_assigning(self) -> np.ndarray:
+        if self.explanatory is None:
+            assert self.try_set_data(self.data)
+        return self.fl.f_without_assigning(self.explanatory)
 
     def _is_valid_function(self) -> bool:
         return len(self.fl) > 0
@@ -105,8 +117,22 @@ class Fit:
         found, target_func, _ = self._try_get_function(f_name)
         if (not found) or (target_func is None):
             return False, None
-        
+
         for param in target_func.parameters:
             if param.name == p_name:
                 return True, param
         return False, None
+
+    @staticmethod
+    def _is_valid_data(data: np.ndarray, explanatory: Optional[ExplanatoryType]) -> bool:
+        if type(data) is not np.ndarray:
+            return False
+        if data.ndim > 2:
+            return False
+
+        if explanatory is None:
+            return True
+
+        if isinstance(explanatory, tuple):
+            return len(explanatory) == int(data.ndim)
+        return int(data.ndim) == 1

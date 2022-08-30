@@ -9,12 +9,15 @@ import numpy as np
 from functions.base_function import BaseFunction
 
 
+ExplanatoryType = Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
+
+
 class FunctionList:
     def __init__(self, f_list: Optional[List[BaseFunction]] = None):
         if f_list is None:
             f_list = []
         self._funcs: List[BaseFunction] = f_list
-        self.dim = None
+        self.dim = -1
 
     def __len__(self):
         return len(self._funcs)
@@ -63,19 +66,19 @@ class FunctionList:
             return -1, "異なる複数の次元の関数が検出されました"
         return dims[0], "OK"
 
-    def _f(self, explanatory: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]], *args) -> np.ndarray:
-        self._assign_arg(*args)
+    def f_without_assigning(self, explanatory: ExplanatoryType) -> np.ndarray:
         sub_function_results = [func.f(explanatory) for func in self._funcs]
         return np.sum(sub_function_results, axis=0)
 
     def f(self, *args) -> np.ndarray:
         msg = ""
-        if self.dim is None:
+        self._assign_arg(*args[1:])
+        if self.dim == -1:
             self.dim, msg = self._detect_dim()
         if self.dim == 1:
-            return self._f(args[0], *args[1:])
+            return self.f_without_assigning(args[0])
         if self.dim == 2:
-            return self._f((args[0][0], args[0][1]), *args[1:])
+            return self.f_without_assigning((args[0][0], args[0][1]))
         assert False, msg
 
 
