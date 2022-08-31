@@ -56,7 +56,8 @@ class SetCommand(BaseCommand):
 
             if self.com_args[3] > self.com_args[4]:
                 # lower bound (self.com_args[3]) must be smaller than upper bound (self.com_args[4])
-                raise CommandParseException("下限値は上限値よりも小さい値に設定してください: {0}, {1]".format(self.com_args[3], self.com_args[4]))
+                raise CommandParseException("下限値は上限値よりも小さい値に設定してください: {0}, {1]"
+                                            .format(self.com_args[3], self.com_args[4]))
             return
 
         if self.com_args[0] == "state":

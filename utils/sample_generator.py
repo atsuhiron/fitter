@@ -25,8 +25,8 @@ def gen_2d_gaussian(size: Optional[Union[int, Tuple[int, int]]] = None,
     if params is None:
         params = {
             "norm": 100.0,
-            "mean_x": 2.1,
-            "mean_y": -6.4,
+            "mean_x": 1.2,
+            "mean_y": -3.1,
             "sigma_l": 2.6,
             "sigma_s": 0.9,
             "theta": 0.2

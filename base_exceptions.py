@@ -1,0 +1,2 @@
+class FitterException(Exception):
+    pass

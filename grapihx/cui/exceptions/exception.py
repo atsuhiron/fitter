@@ -1,14 +1,13 @@
-class FitterException(Exception):
+import base_exceptions as base_exception
+
+
+class QuitException(base_exception.FitterException):
     pass
 
 
-class QuitException(FitterException):
+class CommandParseException(base_exception.FitterException):
     pass
 
 
-class CommandParseException(FitterException):
-    pass
-
-
-class CommandExecutionException(FitterException):
+class CommandExecutionException(base_exception.FitterException):
     pass

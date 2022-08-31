@@ -4,7 +4,7 @@ import numpy as np
 
 from fit import Fit
 from grapihx.base_gfx import BaseGfx
-from grapihx.cui.exceptions.exception import FitterException
+from base_exceptions import FitterException
 from grapihx.cui.exceptions.exception import QuitException
 import grapihx.cui.command_parser as com_parser
 

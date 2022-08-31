@@ -16,6 +16,7 @@ class FitCommand(BaseCommand):
         return CuiMainCommandType.FIT
 
     def execute(self, fitter: Fit):
+        fitter.runtime_check()
         pass
 
     def check(self):

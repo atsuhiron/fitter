@@ -66,6 +66,12 @@ class FunctionList:
             return -1, "異なる複数の次元の関数が検出されました"
         return dims[0], "OK"
 
+    def apply_dim(self) -> Tuple[int, str]:
+        if self.dim == -1:
+            self.dim, msg = self._detect_dim()
+            return self.dim, msg
+        return self.dim, "OK"
+
     def f_without_assigning(self, explanatory: ExplanatoryType) -> np.ndarray:
         sub_function_results = [func.f(explanatory) for func in self._funcs]
         return np.sum(sub_function_results, axis=0)
@@ -75,6 +81,7 @@ class FunctionList:
         self._assign_arg(*args[1:])
         if self.dim == -1:
             self.dim, msg = self._detect_dim()
+
         if self.dim == 1:
             return self.f_without_assigning(args[0])
         if self.dim == 2:

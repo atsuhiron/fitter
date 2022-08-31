@@ -38,7 +38,7 @@ if __name__ == "__main__":
     xm, ym, sample_data = sample_gen.gen_2d_gaussian()
     fl = function_list.FunctionList()
     fl.add_func(Gauss)
-    fitter = Fit(sample_data, fl)
+    fitter = Fit(sample_data, fl, (xm, ym))
     # init_param = [1.0, 1.0, 0.0, 1.0, 1.0, 0.2]
     # raveled_mesh = tuple(np.array([xm.ravel(), ym.ravel()]))
     # opt_para, opt_cov = so.curve_fit(fl.f, raveled_mesh, sample_data.ravel(), init_param, bounds=fl.get_bounds())
