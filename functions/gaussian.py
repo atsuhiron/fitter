@@ -41,16 +41,13 @@ class Gauss(BaseFunction):
     def f_core(x: np.ndarray, y: np.ndarray,
                norm: float, mean_x: float, mean_y: float,
                sigma_l: float, sigma_s: float, theta: float) -> np.ndarray:
-        sigma_l *= sigma_l
-        sigma_s *= sigma_s
         sin_sq = np.sin(theta) ** 2
         cos_sq = np.cos(theta) ** 2
         sin_2 = np.sin(2*theta)
-        cos_2 = np.cos(2*theta)
 
-        coef_a = cos_sq / (2 * sigma_l) + sin_sq / (2 * sigma_s)
-        coef_b = sin_2 / (4 * sigma_l) + cos_2 / (4 * sigma_s)
-        coef_c = sin_sq / (2 * sigma_l) + cos_sq / (2 * sigma_s)
+        coef_a = cos_sq / (2 * sigma_l ** 2) + sin_sq / (2 * sigma_s ** 2)
+        coef_b = sin_2 / (4 * sigma_l ** 2) + sin_2 / (4 * sigma_s ** 2)
+        coef_c = sin_sq / (2 * sigma_l ** 2) + cos_sq / (2 * sigma_s ** 2)
 
         shift_x = x - mean_x
         shift_y = y - mean_y
