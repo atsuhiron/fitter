@@ -5,6 +5,7 @@ from typing import List
 from typing import Tuple
 
 import numpy as np
+import scipy.optimize as so
 
 from function_list import FunctionList
 from function_list import ExplanatoryType
@@ -116,6 +117,14 @@ class Fit:
             assert self.try_set_data(self.data)
         return self.fl.f_without_assigning(self.explanatory)
 
+    def curve_fit(self) -> Tuple[np.ndarray, np.ndarray]:
+        # raises RuntimeError
+        raveled_expl = self._get_raveled_expl()
+        opt_para, opt_cov = so.curve_fit(self.fl.f, raveled_expl, self.data.ravel(),
+                                         p0=self.fl.get_values(), bounds=self.fl.get_bounds())
+        self.fl.set_values(*opt_para)
+        return opt_para, opt_cov
+
     def _is_valid_function(self) -> bool:
         return len(self.fl) > 0
 
@@ -137,6 +146,13 @@ class Fit:
             if param.name == p_name:
                 return True, param
         return False, None
+
+    def _get_raveled_expl(self) -> np.ndarray:
+        if self.get_dim() == 1:
+            return self.explanatory
+        if self.get_dim() == 2:
+            return np.array([self.explanatory[0].ravel(), self.explanatory[1].ravel()])
+        assert False
 
     @staticmethod
     def _is_valid_data(data: np.ndarray, explanatory: Optional[ExplanatoryType]) -> bool:

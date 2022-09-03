@@ -32,13 +32,27 @@ class FunctionList:
     def remove_func(self, index: int):
         self._funcs.pop(index)
 
-    def get_bounds(self) -> Tuple[Tuple[float, ...], Tuple[float, ...]]:
+    def get_bounds(self, is_free: bool = True) -> Tuple[Tuple[float, ...], Tuple[float, ...]]:
         bounds = []
         for func in self._funcs:
-            bounds += func.get_bounds()
+            bounds += func.get_bounds(is_free)
 
         transposed = np.transpose(np.array(bounds))
         return tuple(transposed[0]), tuple(transposed[1])
+
+    def get_values(self, is_free: bool = True) -> List[float]:
+        values = []
+        for func in self._funcs:
+            values += func.get_values(is_free)
+        return values
+
+    def set_values(self, *args):
+        arg_index = 0
+        for func in self._funcs:
+            free_param_num = func.get_free_num()
+            free_param = args[arg_index: arg_index + free_param_num]
+            is_success = func.try_assign_arg(*free_param)
+            assert is_success
 
     def _publish_new_fid(self, func_type: Type[BaseFunction]) -> int:
         name = func_type.name()
@@ -48,14 +62,6 @@ class FunctionList:
                 continue
             current_fid = max(current_fid, f.fid)
         return current_fid + 1
-
-    def _assign_arg(self, *args):
-        arg_index = 0
-        for func in self._funcs:
-            free_param_num = func.get_free_num()
-            free_param = args[arg_index: arg_index + free_param_num]
-            is_success = func.try_assign_arg(*free_param)
-            assert is_success
 
     def _detect_dim(self) -> Tuple[int, str]:
         if len(self._funcs) == 0:
@@ -78,7 +84,7 @@ class FunctionList:
 
     def f(self, *args) -> np.ndarray:
         msg = ""
-        self._assign_arg(*args[1:])
+        self.set_values(*args[1:])
         if self.dim == -1:
             self.dim, msg = self._detect_dim()
 
