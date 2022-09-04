@@ -109,6 +109,8 @@ class SetCommand(BaseCommand):
         if self.com_args[0] == SetSubCommandType.DEPENDENCY:
             # ex. set depend gauss_0 sigma_l sigma_s
             # ex. set depend gauss_0 sigma_l sigma_s 0.5
+            if not (4 <= len(self.com_args) <= 5):
+                raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
             if not isinstance(self.com_args[3], str):
                 # parameter name must be string
                 raise CommandParseException("パラメータ名は文字列で指定してください: {}".format(self.com_args[3]))
@@ -123,10 +125,26 @@ class SetCommand(BaseCommand):
         if self.com_args[0] == SetSubCommandType.GLOBAL_DEPENDENCY:
             # ex. set global_depend gauss_0 sigma_l gauss_1 sigma_l
             # ex. set global_depend gauss_0 sigma_l gauss_1 sigma_l 0.5
-            # TODO: 方法を考える
-            raise CommandParseException("この機能は未実装です: {}".format(self.com_args[0]))
+            if not (5 <= len(self.com_args) <= 6):
+                raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
+            if not isinstance(self.com_args[3], str):
+                # dependency function name must be string
+                raise CommandParseException("依存先の関数名は文字列で指定してください: {}".format(self.com_args[3]))
+            if not isinstance(self.com_args[4], str):
+                # parameter name must be string
+                raise CommandParseException("パラメータ名は文字列で指定してください: {}".format(self.com_args[4]))
+
+            if len(self.com_args) == 6:
+                # With depending coefficient
+                if not isinstance(self.com_args[5], float):
+                    # Depending Coefficient must be numeric
+                    raise CommandParseException("依存係数は数値で指定指定してください: {}".format(self.com_args[5]))
+            return
 
         if self.com_args[0] == SetSubCommandType.DEPENDENCY_COEF:
+            if len(self.com_args) != 4:
+                raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
+
             if not isinstance(self.com_args[3], float):
                 # depend coefficient must be numeric
                 raise CommandParseException("依存係数は数値で指定指定してください: {}".format(self.com_args[3]))
