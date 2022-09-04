@@ -20,7 +20,7 @@ class CuiGfx(BaseGfx):
             return
 
         while True:
-            com_str = input(">>>")
+            com_str = input(">>> ")
             try:
                 command = com_parser.parse(com_str)
                 command.execute(self.fit)
@@ -35,3 +35,7 @@ class CuiGfx(BaseGfx):
 
     def end(self):
         pass
+
+    def debug(self, com_str: str):
+        command = com_parser.parse(com_str)
+        command.execute(self.fit)

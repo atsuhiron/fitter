@@ -12,7 +12,6 @@ from function_list import ExplanatoryType
 from functions.function_info import FunctionInfo
 from functions.base_function import BaseFunction
 from functions.function_parameters import FuncParameter
-from functions.function_parameters import ParamState
 from functions.constant import Constant
 from functions.gaussian import Gauss
 from base_exceptions import FitterException
@@ -57,32 +56,30 @@ class Fit:
         return True
 
     def try_remove_function_from_unique_name(self, unique_name: str) -> bool:
-        found, target_func, index = self._try_get_function(unique_name)
+        found, target_func, index = self.try_get_function(unique_name)
         if (not found) or (target_func is None):
             return False
         self.fl.remove_func(index)
         return True
 
-    def try_set_parameter_value(self, f_name: str, p_name: str, value: float) -> bool:
-        found, param = self._try_get_parameter(f_name, p_name)
-        if (not found) or (param is None):
-            return False
-        param.name = value
-        return True
+    def try_get_function(self, f_name: str) -> Tuple[bool, Optional[BaseFunction], int]:
+        if not self._is_valid_function():
+            return False, None, -1
 
-    def try_set_parameter_bound(self, f_name: str, p_name: str, bounds: Tuple[float, float]) -> bool:
-        found, param = self._try_get_parameter(f_name, p_name)
-        if (not found) or (param is None):
-            return False
-        param.param_range = bounds
-        return True
+        for i, func in enumerate(self.fl.get_functions()):
+            if func.unique_name() == f_name:
+                return True, func, i
+        return False, None, -1
 
-    def try_set_parameter_state(self, f_name: str, p_name: str, p_state: ParamState) -> bool:
-        found, param = self._try_get_parameter(f_name, p_name)
-        if (not found) or (param is None):
-            return False
-        param.state = p_state
-        return True
+    def try_get_parameter(self, f_name: str, p_name: str) -> Tuple[bool, Optional[FuncParameter]]:
+        found, target_func, _ = self.try_get_function(f_name)
+        if (not found) or (target_func is None):
+            return False, None
+
+        for param in target_func.parameters:
+            if param.name == p_name:
+                return True, param
+        return False, None
 
     def try_set_data(self, data: np.ndarray, explanatory: Optional[ExplanatoryType] = None) -> bool:
         if self._is_valid_data(data, explanatory):
@@ -126,25 +123,6 @@ class Fit:
 
     def _is_valid_function(self) -> bool:
         return len(self.fl) > 0
-
-    def _try_get_function(self, f_name: str) -> Tuple[bool, Optional[BaseFunction], int]:
-        if not self._is_valid_function():
-            return False, None, -1
-
-        for i, func in enumerate(self.fl.get_functions()):
-            if func.unique_name() == f_name:
-                return False, func, i
-        return False, None, -1
-
-    def _try_get_parameter(self, f_name: str, p_name: str) -> Tuple[bool, Optional[FuncParameter]]:
-        found, target_func, _ = self._try_get_function(f_name)
-        if (not found) or (target_func is None):
-            return False, None
-
-        for param in target_func.parameters:
-            if param.name == p_name:
-                return True, param
-        return False, None
 
     def _get_raveled_expl(self) -> np.ndarray:
         if self.get_dim() == 1:

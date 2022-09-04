@@ -46,4 +46,5 @@ if __name__ == "__main__":
     # print(opt_cov)
 
     cui = CuiGfx(fitter, sample_data)
+    #cui.debug("set value gauss_0 norm 40.2")
     cui.start()

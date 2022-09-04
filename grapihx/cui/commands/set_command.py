@@ -1,6 +1,7 @@
 from typing import List
 
 from fit import Fit
+from functions.function_parameters import FuncParameter
 from functions.function_parameters import ParamState
 from utils import enum_parser
 from grapihx.cui.commands.base_command import BaseCommand
@@ -8,6 +9,7 @@ from grapihx.cui.commands.base_command import CuiMainCommandType
 from grapihx.cui.commands.base_command import SetSubCommandType
 from grapihx.cui.commands.base_command import ComArgType
 from grapihx.cui.exceptions.exception import CommandParseException
+from grapihx.cui.exceptions.exception import CommandExecutionException
 
 
 class SetCommand(BaseCommand):
@@ -19,7 +21,66 @@ class SetCommand(BaseCommand):
         return CuiMainCommandType.SET
 
     def execute(self, fitter: Fit):
-        pass
+        objective_param = self._get_param(fitter, self.com_args[1], self.com_args[2])
+
+        if self.com_args[0] == SetSubCommandType.VALUE:
+            self._execute_value_com(objective_param)
+            return
+        if self.com_args[0] == SetSubCommandType.BOUNDS:
+            self._execute_bounds_com(objective_param)
+            return
+        if self.com_args[0] == SetSubCommandType.STATE:
+            self._execute_state_com(objective_param)
+            return
+        if self.com_args[0] == SetSubCommandType.DEPENDENCY:
+            self._execute_dependency_com(objective_param)
+            return
+        if self.com_args[0] == SetSubCommandType.GLOBAL_DEPENDENCY:
+            self._execute_global_dependency_com(fitter, objective_param)
+            return
+        if self.com_args[0] == SetSubCommandType.DEPENDENCY_COEF:
+            self._execute_dependency_coef_com(objective_param)
+            return
+        raise CommandExecutionException("不明なサブコマンドです: {}".format(self.com_args[0]))
+
+    def _execute_value_com(self, objective_param: FuncParameter):
+        objective_param.value = self.com_args[3]
+
+    def _execute_bounds_com(self, objective_param: FuncParameter):
+        objective_param.param_range = (self.com_args[4], self.com_args[5])
+
+    def _execute_state_com(self, objective_param: FuncParameter):
+        objective_param.state = self.com_args[3]
+
+        if self.com_args[3] == ParamState.FIX:
+            if len(self.com_args) == 5:
+                objective_param.value = self.com_args[4]
+            return
+
+        if self.com_args[3] == ParamState.FREE:
+            if len(self.com_args) == 5:
+                objective_param.value = self.com_args[4]
+            return
+
+        if self.com_args[3] == ParamState.DEPENDED:
+            objective_param.depend_parent = self.com_args[4]
+            if len(self.com_args) == 6:
+                objective_param.value = self.com_args[5]
+            return
+
+        if self.com_args[3] == ParamState.GLOBAL_DEPENDED:
+            raise CommandExecutionException("この機能は未実装です")
+
+    def _execute_dependency_com(self, objective_param: FuncParameter):
+        objective_param.depend_parent = self.com_args[3]
+        if len(self.com_args) == 5:
+            objective_param.depend_coef = self.com_args[4]
+
+    def _execute_global_dependency_com(self, fitter: Fit, objective_param: FuncParameter):
+        raise CommandExecutionException("この機能は未実装です: {}".format(self.com_args[0]))
+
+    def _execute_dependency_coef_com(self, objective_param: FuncParameter):
+        objective_param.depend_coef = self.com_args[3]
 
     def check(self):
         # ex. set value gauss_0 norm 12.22
@@ -152,3 +213,11 @@ class SetCommand(BaseCommand):
 
         # unsupported commands
         raise CommandParseException("不明なコマンドです: {}".format(self.com_args[0]))
+
+    @staticmethod
+    def _get_param(fitter: Fit, func_name: str, param_name: str) -> FuncParameter:
+        is_success, parameter = fitter.try_get_parameter(func_name, param_name)
+
+        if not is_success:
+            raise CommandExecutionException("指定された関数・パラメータがありません: {}, {}".format(func_name, param_name))
+        return parameter
