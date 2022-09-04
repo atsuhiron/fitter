@@ -1,3 +1,4 @@
+from typing import Optional
 from typing import Union
 from typing import Tuple
 from typing import List
@@ -24,6 +25,9 @@ class Constant(BaseFunction):
     @property
     def parameters(self) -> List[FuncParameter]:
         return self._parameters
+
+    def feature_point(self) -> Optional[np.ndarray]:
+        return None
 
     def f(self, explanatory: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
         return explanatory[0] * 0 + self._parameters[0].value

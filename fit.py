@@ -48,6 +48,9 @@ class Fit:
     def get_func_info(self) -> List[FunctionInfo]:
         return [func.get_function_info() for func in self.fl.get_functions()]
 
+    def get_feature_points(self) -> List[Tuple[str, Optional[np.ndarray]]]:
+        return [(func.unique_name(), func.feature_point()) for func in self.fl.get_functions()]
+
     def try_add_function_from_name(self, function_name: str) -> bool:
         f_type = self.FUNCTION_LIST.get(function_name)
         if f_type is None:

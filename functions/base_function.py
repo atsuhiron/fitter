@@ -37,6 +37,10 @@ class BaseFunction(metaclass=abc.ABCMeta):
     def parameters(self) -> List[FuncParameter]:
         pass
 
+    @abc.abstractmethod
+    def feature_point(self) -> Optional[np.ndarray]:
+        pass
+
     def get_function_info(self) -> FunctionInfo:
         return FunctionInfo(
             self.name(),

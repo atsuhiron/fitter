@@ -1,3 +1,4 @@
+from typing import Optional
 from typing import Union
 from typing import Tuple
 from typing import List
@@ -31,6 +32,9 @@ class Gauss(BaseFunction):
     @property
     def parameters(self) -> List[FuncParameter]:
         return self._parameters
+
+    def feature_point(self) -> Optional[np.ndarray]:
+        return np.array([self._parameters[1].value, self._parameters[2].value])
 
     def f(self, explanatory: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
         values = [param.value for param in self._parameters]
