@@ -7,9 +7,6 @@ from functions.function_parameters import ParamState
 from fit import Fit
 
 
-ComArgType = Union[float, str, ParamState]
-
-
 # noinspection PyArgumentList
 class CuiMainCommandType(Enum):
     DEFAULT = 0
@@ -23,6 +20,24 @@ class CuiMainCommandType(Enum):
     SAVE = auto()
     SET = auto()
     SET_DATA = auto()
+
+
+# noinspection PyArgumentList
+class SetSubCommandType(Enum):
+    DEFAULT = 0
+    VALUE = auto()
+    BOUNDS = auto()
+    STATE = auto()
+    DEPENDENCY = auto()
+    GLOBAL_DEPENDENCY = auto()
+    DEPENDENCY_COEF = auto()
+
+    @staticmethod
+    def show_available() -> List[str]:
+        return [s.name.lower() for s in SetSubCommandType][1:]
+
+
+ComArgType = Union[float, str, ParamState, SetSubCommandType]
 
 
 class BaseCommand(metaclass=abc.ABCMeta):

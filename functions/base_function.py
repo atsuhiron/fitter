@@ -64,7 +64,7 @@ class BaseFunction(metaclass=abc.ABCMeta):
             elif param.state == ParamState.GLOBAL_DEPENDED:
                 print("Not supported")
 
-        # apply to DEPENDED
+        # apply to DEPENDENCY
         for index, param in enumerate(self.parameters):
             if param.state != ParamState.DEPENDED:
                 continue

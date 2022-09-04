@@ -7,6 +7,7 @@ from utils import enum_parser
 from grapihx.cui.exceptions.exception import CommandParseException
 from grapihx.cui.commands.base_command import BaseCommand
 from grapihx.cui.commands.base_command import CuiMainCommandType
+from grapihx.cui.commands.base_command import SetSubCommandType
 from grapihx.cui.commands.base_command import ComArgType
 from grapihx.cui.commands.help_command import HelpCommand
 from grapihx.cui.commands.quit_command import QuitCommand
@@ -44,17 +45,24 @@ def parse(com: str) -> BaseCommand:
         msg += '\nhelp と入力すれば使い方が表示されます'
         raise CommandParseException(msg)
 
-    number_casted_args: List[ComArgType] = []
+    casted_args: List[ComArgType] = []
     for raw_arg in com_args[1:]:
         if _is_int(raw_arg):
-            number_casted_args.append(float(raw_arg))
+            casted_args.append(float(raw_arg))
             continue
-        if _is_float(raw_arg):
-            number_casted_args.append(float(raw_arg))
-            continue
-        number_casted_args.append(raw_arg)
 
-    command = _COM_TYPE_TO_COM_MAP[main_com](number_casted_args)
+        if _is_float(raw_arg):
+            casted_args.append(float(raw_arg))
+            continue
+
+        _set_sub_com = SetSubCommandType(enum_parser.parse_enum(raw_arg, SetSubCommandType))
+        if _set_sub_com is not SetSubCommandType.DEFAULT:
+            casted_args.append(_set_sub_com)
+            continue
+
+        casted_args.append(raw_arg)
+
+    command = _COM_TYPE_TO_COM_MAP[main_com](casted_args)
     command.check()
     return command
 

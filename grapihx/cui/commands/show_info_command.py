@@ -10,7 +10,7 @@ from grapihx.cui.exceptions.exception import CommandParseException
 
 class ShowInfoCommand(BaseCommand):
     _UPPER_HEADER = "{:^32s} {:^10s} {:^12s} {:^27s} {:^34s}" \
-        .format("name", "state", "value", "bounds", "depended")
+        .format("name", "state", "value", "bounds", "dependency")
     _LOWER_HEADER = "{:^10s} {:^10s} {:^10s} {:^10s} {:^12s} ({:^12s} {:^12s}) {:^10s} {:^10s} {:^12s}" \
         .format("function", "unique", "parameter", "state", "value", "lower", "upper", "unique", "parameter", "coef")
     _INFO_TEMP = "{:<10s} {:<10s} {:<10s} {:<10s} {:<12G} ({:<12G} {:<12G})"

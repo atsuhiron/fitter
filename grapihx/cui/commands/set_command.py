@@ -5,6 +5,7 @@ from functions.function_parameters import ParamState
 from utils import enum_parser
 from grapihx.cui.commands.base_command import BaseCommand
 from grapihx.cui.commands.base_command import CuiMainCommandType
+from grapihx.cui.commands.base_command import SetSubCommandType
 from grapihx.cui.commands.base_command import ComArgType
 from grapihx.cui.exceptions.exception import CommandParseException
 
@@ -27,8 +28,9 @@ class SetCommand(BaseCommand):
         if not (4 <= len(self.com_args) <= 6):
             raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
 
-        if not isinstance(self.com_args[0], str):
-            raise CommandParseException("セット対象は文字列で指定してください: {}".format(self.com_args[0]))
+        if not isinstance(self.com_args[0], SetSubCommandType):
+            raise CommandParseException("不明なセット対象です: {} (available is {})"
+                                        .format(self.com_args[0], SetSubCommandType.show_available()))
 
         if not isinstance(self.com_args[1], str):
             raise CommandParseException("関数名は文字列で指定してください: {}".format(self.com_args[1]))
@@ -36,13 +38,13 @@ class SetCommand(BaseCommand):
         if not isinstance(self.com_args[2], str):
             raise CommandParseException("パラメータ名は文字列で指定してください: {}".format(self.com_args[2]))
 
-        if self.com_args[0] == "value":
+        if self.com_args[0] == SetSubCommandType.VALUE:
             if not isinstance(self.com_args[3], float):
                 # value must be numeric
                 raise CommandParseException("パラメータ値は数値で指定してください: {}".format(self.com_args[3]))
             return
 
-        if self.com_args[0] == "bounds":
+        if self.com_args[0] == SetSubCommandType.BOUNDS:
             if len(self.com_args) != 5:
                 raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
 
@@ -60,7 +62,7 @@ class SetCommand(BaseCommand):
                                             .format(self.com_args[3], self.com_args[4]))
             return
 
-        if self.com_args[0] == "state":
+        if self.com_args[0] == SetSubCommandType.STATE:
             if not isinstance(self.com_args[3], str):
                 # state must be string
                 raise CommandParseException("ステートは文字列で指定してください: {}".format(self.com_args[3]))
@@ -104,7 +106,7 @@ class SetCommand(BaseCommand):
                 raise CommandParseException("この機能は未実装です: {}".format(self.com_args[3]))
             return
 
-        if self.com_args[0] == "depend":
+        if self.com_args[0] == SetSubCommandType.DEPENDENCY:
             # ex. set depend gauss_0 sigma_l sigma_s
             # ex. set depend gauss_0 sigma_l sigma_s 0.5
             if not isinstance(self.com_args[3], str):
@@ -118,13 +120,13 @@ class SetCommand(BaseCommand):
                     raise CommandParseException("依存係数は数値で指定指定してください: {}".format(self.com_args[4]))
             return
 
-        if self.com_args[0] == "global_depend":
+        if self.com_args[0] == SetSubCommandType.GLOBAL_DEPENDENCY:
             # ex. set global_depend gauss_0 sigma_l gauss_1 sigma_l
             # ex. set global_depend gauss_0 sigma_l gauss_1 sigma_l 0.5
             # TODO: 方法を考える
             raise CommandParseException("この機能は未実装です: {}".format(self.com_args[0]))
 
-        if self.com_args[0] == "depend_coef":
+        if self.com_args[0] == SetSubCommandType.DEPENDENCY_COEF:
             if not isinstance(self.com_args[3], float):
                 # depend coefficient must be numeric
                 raise CommandParseException("依存係数は数値で指定指定してください: {}".format(self.com_args[3]))
