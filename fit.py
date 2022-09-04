@@ -122,7 +122,6 @@ class Fit:
         raveled_expl = self._get_raveled_expl()
         opt_para, opt_cov = so.curve_fit(self.fl.f, raveled_expl, self.data.ravel(),
                                          p0=self.fl.get_values(), bounds=self.fl.get_bounds())
-        self.fl.set_values(*opt_para)
         return opt_para, opt_cov
 
     def _is_valid_function(self) -> bool:
