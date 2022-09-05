@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     fl = FunctionList()
     fl.add_func(Gauss)
-    expl = (np.array([0.0, 0.1]), np.array([0.0, 0.1]))
+    expl = ((np.array([0.0, 0.1]), np.array([0.0, 0.1])),)
     params = tuple(np.random.random(6))
     full_args = expl + params
     print(fl.f(*full_args))
