@@ -96,7 +96,7 @@ class FunctionList:
 
 
 if __name__ == "__main__":
-    from functions.gaussian import Gauss
+    from functions.predefined_functions import Gauss
 
     fl = FunctionList()
     fl.add_func(Gauss)

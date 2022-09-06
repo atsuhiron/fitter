@@ -58,3 +58,27 @@ class Gauss(BaseFunction):
         exp = coef_a * shift_x**2 + 2 * coef_b * shift_x * shift_y + coef_c * shift_y**2
 
         return norm / (2 * np.pi * sigma_s * sigma_l) * np.exp(-exp)
+
+
+class Constant(BaseFunction):
+    def __init__(self, fid: int):
+        super().__init__(fid)
+        self._parameters = [FuncParameter("const", 0.0, (-1e8, 1e8))]
+
+    @classmethod
+    def dim(cls):
+        return 2
+
+    @classmethod
+    def name(cls) -> str:
+        return "const"
+
+    @property
+    def parameters(self) -> List[FuncParameter]:
+        return self._parameters
+
+    def feature_point(self) -> Optional[np.ndarray]:
+        return None
+
+    def f(self, explanatory: Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]) -> np.ndarray:
+        return explanatory[0] * 0 + self._parameters[0].value

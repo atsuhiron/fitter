@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 import scipy.optimize as so
 
-from functions.gaussian import Gauss
+from functions.predefined_functions import Gauss
 import function_list
 import utils.sample_generator as sample_gen
 from fit import Fit

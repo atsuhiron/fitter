@@ -5,7 +5,7 @@ from typing import Tuple
 
 import numpy as np
 
-from functions.gaussian import Gauss
+from functions.predefined_functions import Gauss
 
 
 def gen_2d_gaussian(size: Optional[Union[int, Tuple[int, int]]] = None,

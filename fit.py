@@ -1,28 +1,20 @@
 from typing import Optional
-from typing import Type
-from typing import Dict
 from typing import List
 from typing import Tuple
 
 import numpy as np
 import scipy.optimize as so
 
+from functions.gen_function_list import FUNCTION_MAP
 from function_list import FunctionList
 from function_list import ExplanatoryType
 from functions.function_info import FunctionInfo
 from functions.base_function import BaseFunction
 from functions.function_parameters import FuncParameter
-from functions.constant import Constant
-from functions.gaussian import Gauss
 from base_exceptions import FitterException
 
 
 class Fit:
-    FUNCTION_LIST: Dict[str, Type[BaseFunction]] = {
-        Constant.name(): Constant,
-        Gauss.name(): Gauss
-    }
-
     def __init__(self,
                  data: Optional[np.ndarray] = None,
                  function_list: Optional[FunctionList] = None,
@@ -52,7 +44,7 @@ class Fit:
         return [(func.unique_name(), func.feature_point()) for func in self.fl.get_functions()]
 
     def try_add_function_from_name(self, function_name: str) -> bool:
-        f_type = self.FUNCTION_LIST.get(function_name)
+        f_type = FUNCTION_MAP.get(function_name)
         if f_type is None:
             return False
         self.fl.add_func(f_type)
