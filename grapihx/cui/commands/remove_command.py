@@ -5,6 +5,7 @@ from grapihx.cui.commands.base_command import BaseCommand
 from grapihx.cui.commands.base_command import CuiMainCommandType
 from grapihx.cui.commands.base_command import ComArgType
 from grapihx.cui.exceptions.exception import CommandParseException
+from grapihx.cui.exceptions.exception import CommandExecutionException
 
 
 class RemoveCommand(BaseCommand):
@@ -16,7 +17,9 @@ class RemoveCommand(BaseCommand):
         return CuiMainCommandType.REMOVE
 
     def execute(self, fitter: Fit):
-        pass
+        function_name = self.com_args[0]
+        if not fitter.try_remove_function_from_unique_name(function_name):
+            raise CommandExecutionException("指定された関数がありません: {}".format(function_name))
 
     def check(self):
         if len(self.com_args) != 1:
