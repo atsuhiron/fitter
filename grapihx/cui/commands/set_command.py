@@ -21,6 +21,10 @@ class SetCommand(BaseCommand):
         return CuiMainCommandType.SET
 
     def execute(self, fitter: Fit):
+        if self._is_short_state_com():
+            self._execute_short_state_com(fitter)
+            return
+
         objective_param = self._get_param(fitter, self.com_args[1], self.com_args[2])
 
         if self.com_args[0] == SetSubCommandType.VALUE:
@@ -71,6 +75,15 @@ class SetCommand(BaseCommand):
         if self.com_args[3] == ParamState.GLOBAL_DEPENDED:
             raise CommandExecutionException("この機能は未実装です")
 
+    def _execute_short_state_com(self, fitter: Fit):
+        found, target_func, index = fitter.try_get_function(self.com_args[1])
+        if (not found) or (target_func is None):
+            raise CommandExecutionException("指定された関数がありません: {}".format(self.com_args[1]))
+
+        state = self.com_args[2]
+        for param in target_func.parameters:
+            param.state = state
+
     def _execute_dependency_com(self, objective_param: FuncParameter):
         objective_param.depend_parent = self.com_args[3]
         if len(self.com_args) == 5:
@@ -86,6 +99,10 @@ class SetCommand(BaseCommand):
         # ex. set value gauss_0 norm 12.22
         # ex. set bounds const_0 const -10 10
         # ex. set bounds const_0 const -10, 10
+        if self._is_short_state_com():
+            self._check_short_state()
+            return
+
         if not (4 <= len(self.com_args) <= 6):
             raise CommandParseException("コマンドの長さが不正です: {}".format(self.com_args))
 
@@ -213,6 +230,33 @@ class SetCommand(BaseCommand):
 
         # unsupported commands
         raise CommandParseException("不明なコマンドです: {}".format(self.com_args[0]))
+
+    def _check_short_state(self):
+        # set state gauss_1 FIX
+        if self.com_args[0] != SetSubCommandType.STATE:
+            raise CommandParseException("省略コマンドではステートのみ設定できます: {}".format(self.com_args[0]))
+        if not isinstance(self.com_args[1], str):
+            raise CommandParseException("関数名は文字列で指定してください: {}".format(self.com_args[1]))
+        if not isinstance(self.com_args[2], str):
+            raise CommandParseException("ステートは文字列で指定してください: {}".format(self.com_args[2]))
+
+        state_enum = ParamState(enum_parser.parse_enum(self.com_args[2], ParamState))
+        if state_enum is ParamState.DEFAULT:
+            # Cannot parse state
+            raise CommandParseException("不明なステートです: {}".format(self.com_args[2]))
+
+        if state_enum in self._get_arrowed_short_state_list():
+            # OK
+            self.com_args[2] = state_enum
+            return
+        raise CommandParseException("以下のコマンドのみ許可されています: {}".format(self._get_arrowed_short_state_list()))
+
+    def _is_short_state_com(self) -> bool:
+        return len(self.com_args) == 3
+
+    @staticmethod
+    def _get_arrowed_short_state_list() -> List[ParamState]:
+        return [ParamState.FREE, ParamState.FIX]
 
     @staticmethod
     def _get_param(fitter: Fit, func_name: str, param_name: str) -> FuncParameter:
