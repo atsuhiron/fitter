@@ -11,6 +11,7 @@ from grapihx.cui.exceptions.exception import CommandExecutionException
 
 
 class SetDataCommand(BaseCommand):
+    SUPPORTED_EXP = [".txt", ".csv", ".tsv"]
     def __init__(self, com_args: List[ComArgType]):
         super().__init__(com_args)
 
@@ -19,11 +20,18 @@ class SetDataCommand(BaseCommand):
         return CuiMainCommandType.SET_DATA
 
     def execute(self, fitter: Fit):
-        local_variables = locals()
-        if self.com_args[0] not in local_variables.keys():
-            raise CommandExecutionException("指定した変数が見つかりません: {}".format(self.com_args[0]))
+        data_name = self.com_args[0]
+        data = None
+        if data_name.endswith(".npy"):
+            data = np.load(data_name)
+        elif any(map(data_name.endswith, SetDataCommand.SUPPORTED_EXP)):
+            data = np.loadtxt(data_name)
+        else:
+            local_variables = locals()
+            if data_name not in local_variables.keys():
+                raise CommandExecutionException("指定した変数が見つかりません: {}".format(data_name))
+            data = local_variables.get(data_name)
 
-        data = local_variables.get(self.com_args[0])
         if not isinstance(data, np.ndarray):
             raise CommandExecutionException("指定した変数の型が不正です: {}".format(type(data)))
 
