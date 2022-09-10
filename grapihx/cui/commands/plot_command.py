@@ -47,6 +47,7 @@ class PlotCommand(BaseCommand):
             "vmax": np.max(data)
         }
         plotted_point = False
+        plt.figure(figsize=(10, 5))
 
         plt.subplot(121)
         plt.title("Data and estimation")
@@ -58,6 +59,9 @@ class PlotCommand(BaseCommand):
                 continue
             plt.plot(point[0], point[1], "o", label=name)
             plotted_point = True
+
+        if plotted_point:
+            plt.legend()
 
         plt.subplot(122)
         plt.title("Residual")
