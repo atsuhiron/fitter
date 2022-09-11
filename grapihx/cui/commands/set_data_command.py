@@ -33,12 +33,40 @@ class SetDataCommand(BaseCommand):
         if not isinstance(data, np.ndarray):
             raise CommandExecutionException("指定した変数の型が不正です: {}".format(type(data)))
 
-        if not fitter.try_set_data(data):
-            raise CommandExecutionException("指定した配列の次元数が不正です: {}".format(data.shape))
+        mesh = None
+        if len(self.com_args) == 4:
+            mesh = np.linspace(*self.com_args[1:])
+        elif len(self.com_args) == 7:
+            x_lin = np.linspace(*self.com_args[1:4])
+            y_lin = np.linspace(*self.com_args[4:7])
+            mesh = tuple(np.meshgrid(x_lin, y_lin))
+
+        if not fitter.try_set_data(data, mesh):
+            raise CommandExecutionException("指定した配列の次元数が不正です: {} {}".format(data.shape, mesh))
 
     def check(self):
-        if len(self.com_args) != 1:
+        if len(self.com_args) < 1:
             raise CommandParseException("変数名を指定してください: {}".format(self.com_args))
 
         if not isinstance(self.com_args[0], str):
             raise CommandParseException("変数名は文字列で指定してください: {}".format(self.com_args))
+
+        if len(self.com_args) == 4:
+            if not self._check_linspace_arg(self.com_args[1:]):
+                raise CommandParseException("説明変数のパラメータが不正です: {}".format(self.com_args[1:]))
+        elif len(self.com_args) == 7:
+            if not self._check_linspace_arg(self.com_args[1:4]):
+                raise CommandParseException("説明変数のパラメータが不正です: {}".format(self.com_args[1:4]))
+            if not self._check_linspace_arg(self.com_args[4:7]):
+                raise CommandParseException("説明変数のパラメータが不正です: {}".format(self.com_args[4:7]))
+        elif len(self.com_args) == 1:
+            # ok
+            pass
+        else:
+            raise CommandParseException("コマンドの長さが不正です: ".format(self.com_args))
+
+    @staticmethod
+    def _check_linspace_arg(args: list) -> bool:
+        return isinstance(args[0], (int, float)) and \
+               isinstance(args[1], (int, float)) and \
+               (isinstance(args[2], int))
