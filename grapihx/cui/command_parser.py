@@ -48,7 +48,7 @@ def parse(com: str) -> BaseCommand:
     casted_args: List[ComArgType] = []
     for raw_arg in com_args[1:]:
         if _is_int(raw_arg):
-            casted_args.append(float(raw_arg))
+            casted_args.append(int(raw_arg))
             continue
 
         if _is_float(raw_arg):
