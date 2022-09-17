@@ -24,31 +24,33 @@ class DynamicFrame(tk.Frame):
         frame.pack()
 
         # draw canvas
-        self.x_arr = np.linspace(-np.pi, np.pi, 64)
+        self.x_arr = np.linspace(-np.pi, np.pi, 128)
         self.y_arr = DynamicFrame.sin(self.x_arr, 1.0)
         self.ax_plot, = self.ax.plot(self.x_arr, self.y_arr)
         self.fig_canvas.draw()
 
         # button
-        button = tk.Button(self.master, text="Draw Graph", command=self.button_click)
+        button = tk.Button(self.master, text="Reset", command=self.reset)
         button.pack(side=tk.BOTTOM)
 
         # slider
         self.val1 = tk.DoubleVar()
+        self.val1.set(1.0)
         self.sli1 = tk.Scale(
             frame, variable=self.val1, orient=tk.HORIZONTAL, length=300, resolution=0.2,
             from_=-5, to=5, command=self.on_slide
         )
         self.sli1.pack()
 
-    def button_click(self):
-        x = np.arange(-np.pi, np.pi, 0.1)
-        y = np.sin(x)
-        self.ax.plot(x, y)
-        self.fig_canvas.draw()
+    def reset(self):
+        self.val1.set(1.0)
+        self.draw(1.0)
 
     def on_slide(self, e):
-        self.y_arr = DynamicFrame.sin(self.x_arr, self.val1.get())
+        self.draw(float(e))
+
+    def draw(self, *args):
+        self.y_arr = DynamicFrame.sin(self.x_arr, args[0])
         self.ax_plot.set_ydata(self.y_arr)
         self.fig_canvas.draw()
 
@@ -68,11 +70,15 @@ class GuiGfx(BaseGfx):
         self.root.mainloop()
 
     def end(self):
+        self.clear_fig()
         self.root.destroy()
         self.root.quit()
+
+    @staticmethod
+    def clear_fig():
+        plt.clf()
 
 
 if __name__ == "__main__":
     gg = GuiGfx()
     gg.start()
-    
