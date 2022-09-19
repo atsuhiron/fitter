@@ -9,6 +9,12 @@ from grapihx.base_gfx import BaseGfx
 
 class DynamicFrame(tk.Frame):
     def __init__(self, master):
+        main_grid_param = {
+            "columnspan": 2,
+            "rowspan": 1,
+            "padx": 6,
+            "pady": 6
+        }
         super(DynamicFrame, self).__init__(master)
         self.master = master
 
@@ -21,7 +27,7 @@ class DynamicFrame(tk.Frame):
 
         self.toolbar = NavigationToolbar2Tk(self.fig_canvas, frame)
         self.fig_canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-        frame.pack()
+        frame.grid(column=0, row=0, **main_grid_param)
 
         # draw canvas
         self.x_arr = np.linspace(-np.pi, np.pi, 128)
@@ -29,15 +35,19 @@ class DynamicFrame(tk.Frame):
         self.ax_plot, = self.ax.plot(self.x_arr, self.y_arr)
         self.fig_canvas.draw()
 
+        # sidebar
+        self.side_bar = tk.Frame(self.master)
+        self.side_bar.grid(column=1, row=0, **main_grid_param)
+
         # button
-        button = tk.Button(self.master, text="Reset", command=self.reset)
-        button.pack(side=tk.BOTTOM)
+        button = tk.Button(self.side_bar, text="Reset", command=self.reset)
+        button.pack()
 
         # slider
         self.val1 = tk.DoubleVar()
         self.val1.set(1.0)
         self.sli1 = tk.Scale(
-            frame, variable=self.val1, orient=tk.HORIZONTAL, length=300, resolution=0.2,
+            self.side_bar, variable=self.val1, orient=tk.HORIZONTAL, length=300, resolution=0.2,
             from_=-5, to=5, command=self.on_slide
         )
         self.sli1.pack()
