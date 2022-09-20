@@ -10,8 +10,6 @@ from grapihx.base_gfx import BaseGfx
 class DynamicFrame(tk.Frame):
     def __init__(self, master):
         main_grid_param = {
-            "columnspan": 2,
-            "rowspan": 1,
             "padx": 6,
             "pady": 6
         }
@@ -23,7 +21,7 @@ class DynamicFrame(tk.Frame):
         # main board
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(1, 1, 1)
-        self.fig_canvas = FigureCanvasTkAgg(self.fig, frame)
+        self.fig_canvas = FigureCanvasTkAgg(self.fig, master=frame)
 
         self.toolbar = NavigationToolbar2Tk(self.fig_canvas, frame)
         self.fig_canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
