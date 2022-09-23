@@ -93,7 +93,7 @@ class DynamicFrame2D(tk.Frame):
 
         self.x_mesh, self.y_mesh = np.meshgrid(_arr, _arr)
         self.z_mesh = DynamicFrame2D.sincos(self.x_mesh, self.y_mesh, DynamicFrame2D.INIT_VAL, DynamicFrame2D.INIT_VAL)
-        self.ax_plot = self.ax.pcolor(self.x_mesh, self.y_mesh, self.z_mesh)
+        self.ax_plot = self.ax.imshow(self.z_mesh)
         self.fig_canvas.draw()
 
         # sidebar
@@ -133,7 +133,7 @@ class DynamicFrame2D(tk.Frame):
 
     def draw(self, *args):
         self.z_mesh = DynamicFrame2D.sincos(self.x_mesh, self.y_mesh, *args)
-        self.ax_plot.set_array(np.ma.core.MaskedArray(self.z_mesh))
+        self.ax_plot.set_data(self.z_mesh)
         self.fig_canvas.draw()
 
     @staticmethod
