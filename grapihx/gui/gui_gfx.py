@@ -1,4 +1,5 @@
-import tkinter as tk
+import tkinter.ttk as ttk
+import tkinter as raw_tk
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -7,7 +8,7 @@ import numpy as np
 from grapihx.base_gfx import BaseGfx
 
 
-class DynamicFrame(tk.Frame):
+class DynamicFrame(ttk.Frame):
     def __init__(self, master):
         main_grid_param = {
             "padx": 6,
@@ -16,7 +17,7 @@ class DynamicFrame(tk.Frame):
         super(DynamicFrame, self).__init__(master)
         self.master = master
 
-        frame = tk.Frame(self.master)
+        frame = ttk.Frame(self.master)
 
         # main board
         self.fig = plt.figure()
@@ -24,7 +25,7 @@ class DynamicFrame(tk.Frame):
         self.fig_canvas = FigureCanvasTkAgg(self.fig, master=frame)
 
         self.toolbar = NavigationToolbar2Tk(self.fig_canvas, frame)
-        self.fig_canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.fig_canvas.get_tk_widget().pack(fill=raw_tk.BOTH, expand=True)
         frame.grid(column=0, row=0, **main_grid_param)
 
         # draw canvas
@@ -34,18 +35,18 @@ class DynamicFrame(tk.Frame):
         self.fig_canvas.draw()
 
         # sidebar
-        self.side_bar = tk.Frame(self.master)
+        self.side_bar = ttk.Frame(self.master)
         self.side_bar.grid(column=1, row=0, **main_grid_param)
 
         # button
-        button = tk.Button(self.side_bar, text="Reset", command=self.reset)
+        button = ttk.Button(self.side_bar, text="Reset", command=self.reset)
         button.pack()
 
         # slider
-        self.val1 = tk.DoubleVar()
+        self.val1 = raw_tk.DoubleVar()
         self.val1.set(1.0)
-        self.sli1 = tk.Scale(
-            self.side_bar, variable=self.val1, orient=tk.HORIZONTAL, length=300, resolution=0.2,
+        self.sli1 = ttk.Scale(
+            self.side_bar, variable=self.val1, orient=raw_tk.HORIZONTAL, length=300,# resolution=0.2,
             from_=-5, to=5, command=self.on_slide
         )
         self.sli1.pack()
@@ -67,7 +68,7 @@ class DynamicFrame(tk.Frame):
         return np.sin(x * freq)
 
 
-class DynamicFrame2D(tk.Frame):
+class DynamicFrame2D(ttk.Frame):
     INIT_VAL: float = 1.0
     def __init__(self, master):
         main_grid_param = {
@@ -77,7 +78,7 @@ class DynamicFrame2D(tk.Frame):
         super(DynamicFrame2D, self).__init__(master)
         self.master = master
 
-        frame = tk.Frame(self.master)
+        frame = ttk.Frame(self.master)
 
         # main board
         self.fig = plt.figure()
@@ -85,7 +86,7 @@ class DynamicFrame2D(tk.Frame):
         self.fig_canvas = FigureCanvasTkAgg(self.fig, master=frame)
 
         self.toolbar = NavigationToolbar2Tk(self.fig_canvas, frame)
-        self.fig_canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.fig_canvas.get_tk_widget().pack(fill=raw_tk.BOTH, expand=True)
         frame.grid(column=0, row=0, **main_grid_param)
 
         # draw canvas
@@ -97,32 +98,33 @@ class DynamicFrame2D(tk.Frame):
         self.fig_canvas.draw()
 
         # sidebar
-        self.side_bar = tk.Frame(self.master)
+        self.side_bar = ttk.Frame(self.master)
         self.side_bar.grid(column=1, row=0, **main_grid_param)
 
         # button
-        button = tk.Button(self.side_bar, text="Reset", command=self.reset)
+        button = ttk.Button(self.side_bar, text="Reset", command=self.reset)
         button.pack()
 
         # slider
-        self.val_s = tk.DoubleVar()
+        self.val_s = raw_tk.DoubleVar()
         self.val_s.set(DynamicFrame2D.INIT_VAL)
-        self.sli_s = tk.Scale(
-            self.side_bar, variable=self.val_s, orient=tk.HORIZONTAL, length=300, resolution=0.2,
+        self.sli_s = ttk.Scale(
+            self.side_bar, variable=self.val_s, orient=raw_tk.HORIZONTAL, length=300,
             from_=-5, to=5, command=self.on_slide_s
         )
         self.sli_s.pack()
 
-        self.val_c = tk.DoubleVar()
+        self.val_c = raw_tk.DoubleVar()
         self.val_c.set(DynamicFrame2D.INIT_VAL)
-        self.sli_c = tk.Scale(
-            self.side_bar, variable=self.val_c, orient=tk.HORIZONTAL, length=300, resolution=0.2,
+        self.sli_c = ttk.Scale(
+            self.side_bar, variable=self.val_c, orient=raw_tk.HORIZONTAL, length=300,
             from_=-5, to=5, command=self.on_slide_c
         )
         self.sli_c.pack()
 
     def reset(self):
         self.val_s.set(DynamicFrame2D.INIT_VAL)
+        self.val_c.set(DynamicFrame2D.INIT_VAL)
         self.draw(DynamicFrame2D.INIT_VAL, DynamicFrame2D.INIT_VAL)
 
     def on_slide_s(self, e):
@@ -143,7 +145,7 @@ class DynamicFrame2D(tk.Frame):
 
 class GuiGfx(BaseGfx):
     def __init__(self):
-        self.root = tk.Tk()
+        self.root = raw_tk.Tk()
         self.root.title("Fitter")
         self.dynamic_frame = DynamicFrame2D(self.root)
         self.root.protocol("WM_DELETE_WINDOW", self.end)
