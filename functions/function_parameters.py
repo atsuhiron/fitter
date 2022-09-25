@@ -1,4 +1,5 @@
 from typing import Tuple
+from typing import List
 import enum
 
 
@@ -9,6 +10,11 @@ class ParamState(enum.Enum):
     FIX = enum.auto()
     DEPENDED = enum.auto()
     GLOBAL_DEPENDED = enum.auto()
+
+    @classmethod
+    def get_display_list(cls) -> List[str]:
+        displays = [s.name for s in ParamState]
+        return displays[1:]
 
 
 class FuncParameter:
