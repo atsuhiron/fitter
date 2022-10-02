@@ -1,4 +1,5 @@
 from typing import Tuple
+import argparse
 
 import numpy as np
 import scipy.optimize as so
@@ -46,5 +47,11 @@ if __name__ == "__main__":
     # print(opt_cov)
 
     cui = CuiGfx(fitter, sample_data)
-    #cui.debug("set value gauss_0 norm 40.2")
-    cui.start()
+    cui.debug("set_data rd2.npy 0 22 12")
+    #cui.start()
+
+    # parser = argparse.ArgumentParser(description="Optimize parameters of a function to given data.")
+    # parser.add_argument("mode", choices=["cui", "gui"], help="Execution mode")
+    # parser.add_argument("-d", "--data", help="Supported extensions are txt, csv, tsv or npy")
+    # parser.add_argument("-l", "--lang", choices=["en", "ja"])
+    # args = parser.parse_args()
