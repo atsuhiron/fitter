@@ -6,7 +6,7 @@ from functions.function_parameters import ParamState
 from functions.function_parameters import FuncParameter
 from fit import Fit
 
-ev = None
+
 class ParameterBlock:
     COMMON_SCALE_CONFIG = {
         "orient": tk.HORIZONTAL,
