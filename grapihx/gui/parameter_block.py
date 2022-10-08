@@ -6,7 +6,7 @@ from functions.function_parameters import ParamState
 from functions.function_parameters import FuncParameter
 from fit import Fit
 
-
+ev = None
 class ParameterBlock:
     COMMON_SCALE_CONFIG = {
         "orient": tk.HORIZONTAL,
@@ -22,7 +22,7 @@ class ParameterBlock:
     def __init__(self,
                  master,
                  func_param: FuncParameter,
-                 on_update_scale: Callable[[str], None],
+                 on_update_scale: Callable[[float], None],
                  on_update_state: Callable[[str], None]):
         self.on_update_scale_core = on_update_scale
         self.on_update_state_core = on_update_state
@@ -48,15 +48,13 @@ class ParameterBlock:
         self.cbox.grid(column=1, **ParameterBlock.GRID_CONFIG)
         self.param_frame.pack()
 
-    def _on_update_scale(self, event: str):
+    def _on_update_scale(self, _: str):
         # 何か追加の処理があれば
-        self.on_update_scale_core(event)
+        self.on_update_scale_core(self.var_scale.get())
 
-    def _on_update_state(self, event):
+    def _on_update_state(self, _: tk.Event):
         # 何か追加の処理があれば
-        print(event)
-        print(type(event))
-        self.on_update_state_core(event)
+        self.on_update_state_core(self.var_cbox.get())
 
 
 if __name__ == "__main__":
