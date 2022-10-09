@@ -1,3 +1,4 @@
+from typing import Optional
 from typing import Callable
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -28,6 +29,17 @@ class ParameterBlock:
         self.on_update_state_core = on_update_state
         self.param_frame = ttk.Frame(master)
 
+        self.name: Optional[str] = None
+        self.var_scale: Optional[tk.DoubleVar] = None
+        self.scale: Optional[ttk.Scale] = None
+        self.var_cbox: Optional[tk.StringVar] = None
+        self.cbox: Optional[ttk.Combobox] = None
+
+        self.grid_element(func_param)
+
+    def grid_element(self, func_param: FuncParameter):
+        # range を変更したときに呼ぶ
+        self._destroy()
         self.name = func_param.name
         self.var_scale = tk.DoubleVar(value=func_param.value)
         self.scale = ttk.Scale(self.param_frame,
@@ -39,6 +51,7 @@ class ParameterBlock:
         self.scale.grid(column=0, **ParameterBlock.GRID_CONFIG)
 
         self.var_cbox = tk.StringVar()
+        self.var_cbox.set(func_param.state.name)
         self.cbox = ttk.Combobox(self.param_frame,
                                  textvariable=self.var_cbox,
                                  values=ParameterBlock.CBOX_LABELS,
@@ -47,6 +60,12 @@ class ParameterBlock:
         self.cbox.bind('<<ComboboxSelected>>', self._on_update_state)
         self.cbox.grid(column=1, **ParameterBlock.GRID_CONFIG)
         self.param_frame.pack()
+
+    def _destroy(self):
+        if self.scale is not None:
+            self.scale.destroy()
+        if self.cbox is not None:
+            self.cbox.destroy()
 
     def _on_update_scale(self, _: str):
         # 何か追加の処理があれば
